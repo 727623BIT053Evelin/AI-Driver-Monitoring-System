@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+    <title>AI Driver Monitoring System</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a0ca3;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --dark: #1a1a2e;
+            --darker: #16213e;
+            --light: #e6e6e6;
+            --glass: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, var(--dark), var(--darker));
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--light);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(67, 97, 238, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        .dashboard {
+            display: flex;
+            width: 90%;
+            max-width: 1200px;
+            height: 600px;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+        
+        .sidebar {
+            width: 40%;
+            background: url('https://preview.thenewsmarket.com/Previews/ATFR/StillAssets/1920x1080/638340.jpg') center/cover;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 30px;
+        }
+        
+        .sidebar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to top, rgba(26, 26, 46, 0.9), transparent);
+        }
+        
+        .sidebar-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .logo-icon {
+            font-size: 32px;
+            color: var(--success);
+        }
+        
+        .logo-text {
+            font-size: 24px;
+            font-weight: 600;
+            background: linear-gradient(to right, var(--light), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .sidebar h2 {
+            font-size: 32px;
+            margin: 0 0 10px;
+            line-height: 1.2;
+        }
+        
+        .sidebar p {
+            opacity: 0.8;
+            font-size: 14px;
+        }
+        
+        .main-content {
+            width: 60%;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .status-card {
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .status-title {
+            font-size: 18px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-icon {
+            font-size: 20px;
+        }
+        
+        .status-value {
+            font-size: 28px;
+            font-weight: 600;
+            background: linear-gradient(to right, var(--light), var(--success));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .controls {
+            margin-top: auto;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 16px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(to right, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(67, 97, 238, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(67, 97, 238, 0.4);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(to right, var(--danger), #b5174e);
+            color: white;
+            box-shadow: 0 4px 15px rgba(247, 37, 133, 0.3);
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(247, 37, 133, 0.4);
+        }
+        
+        .btn i {
+            font-size: 20px;
+        }
+        
+        .activity-log {
+            margin-top: 30px;
+            background: var(--glass);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+        
+        .log-title {
+            font-size: 16px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .log-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 14px;
+        }
+        
+        .log-item i {
+            margin-right: 10px;
+            color: var(--success);
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar, .main-content {
+                width: 100%;
+            }
+            
+            .sidebar {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="sidebar">
+            <div class="sidebar-content">
+                <div class="logo">
+                    <i class="ri-steering-2-fill logo-icon"></i>
+                    <span class="logo-text">DMS</span>
+                </div>
+                <h2>AI Driver Monitoring System</h2>
+                <p>Real-time detection of driver distractions, drowsiness, and violations</p>
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="status-card">
+                <div class="status-header">
+                    <div class="status-title">
+                        <i class="ri-dashboard-2-line status-icon"></i>
+                        System Status
+                    </div>
+                </div>
+                <div class="status-value" id="status">IDLE</div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" onclick="startMonitoring()">
+                    <i class="ri-play-line"></i> Start Monitoring
+                </button>
+                <button class="btn btn-danger" onclick="stopMonitoring()">
+                    <i class="ri-stop-line"></i> Stop Monitoring
+                </button>
+            </div>
+            
+            <div class="activity-log">
+                <div class="log-title">
+                    <i class="ri-history-line"></i> Activity Log
+                </div>
+                <div class="log-item">
+                    <i class="ri-checkbox-circle-line"></i> System initialized and ready
+                </div>
+                <div id="logContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function addLog(message) {
+            const logContainer = document.getElementById('logContainer');
+            const logItem = document.createElement('div');
+            logItem.className = 'log-item';
+            logItem.innerHTML = `<i class="ri-information-line"></i> ${new Date().toLocaleTimeString()}: ${message}`;
+            logContainer.prepend(logItem);
+        }
+
+        async function startMonitoring() {
+            try {
+                const response = await fetch('http://localhost:5000/start');
+                const data = await response.text();
+                document.getElementById('status').innerText = "ACTIVE";
+                document.getElementById('status').style.background = "linear-gradient(to right, #4cc9f0, #4895ef)";
+                document.getElementById('status').style.webkitBackgroundClip = "text";
+                document.getElementById('status').style.webkitTextFillColor = "transparent";
+                addLog("Monitoring started - AI is analyzing driver behavior");
+            } catch (error) {
+                console.error("Error:", error);
+                addLog("Error starting monitoring system");
+            }
+        }
+
+        async function stopMonitoring() {
+            try {
+                const response = await fetch('http://localhost:5000/stop');
+                const data = await response.text();
+                document.getElementById('status').innerText = "IDLE";
+                document.getElementById('status').style.background = "linear-gradient(to right, #e6e6e6, #4cc9f0)";
+                addLog("Monitoring stopped - system idle");
+            } catch (error) {
+                console.error("Error:", error);
+                addLog("Error stopping monitoring system");
+            }
+        }
+    </script>
+</body>
+</html>
